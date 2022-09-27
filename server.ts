@@ -2,10 +2,13 @@
  * @file Implements an Express Node HTTP server.
  */
 import express, {Request, Response} from 'express';
+import mongoose from "mongoose";
 const cors = require('cors')
 const app = express();
 app.use(cors());
 app.use(express.json());
+
+mongoose.connect('mongodb://localhost:27017/tuiter');
 
 app.get('/', (req: Request, res: Response) =>
     res.send('Welcome to Foundation of Software Engineering!!!!'));
