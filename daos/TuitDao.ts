@@ -2,16 +2,28 @@ import Tuit from "../models/Tuit";
 import TuitModel from "../mongoose/TuitModel";
 import TuitDaoI from "../interfaces/TuitDao";
 
-// ?????????????? THIS FILE NEEDS TO BE CHECKED ???????????????????????????????
-export default class UserDao implements UserDaoI {
+export default class TuitDao implements TuitDaoI {
    async findAllTuits(): Promise<Tuit[]> {
-       return await TuitModel.find();
-   }
-   async findTuitsByUser(uid: string): Promise<Tuit[]> {
-       return await TuitModel.findById(uid);
+       const allTuitModels = await TuitModel.find();
+       return allTuitModels.map(tuitObj =>
+           new Tuit(tuitObj.tuit, tuitObj.postedOn, tuitObj.postedBy)
+       )
    }
    async findTuitById(tid: string): Promise<Tuit> {
-       return await TuitModel.findById(tid);
+       const tuitObj = await TuitModel.findById(tid);
+       // postedBy is now referencing an ID so how to connect this to the user now???
+       return new Tuit(tuitObj.tuit, tuitObj.postedOn, tuitObj.postedBy);
+   }
+
+
+
+   async findTuitsByUser(uid: string): Promise<Tuit[]> {
+   // need help with this syntax ///////////////////////////////////////////////////////////
+       return TuitModel
+                .find({postedBy: uid})
+                .populate('tuit')
+                .exec();
+
    }
    async createTuit(tuit: Tuit): Promise<Tuit> {
        return await TuitModel.create(tuit);
