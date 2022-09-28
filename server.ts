@@ -3,8 +3,12 @@
  */
 import express, {Request, Response} from 'express';
 import mongoose from "mongoose";
-import uDao from "./daos/UserDao"
-import userController from "./controllers/UserController"
+
+import uDao from "./daos/UserDao";
+import userController from "./controllers/UserController";
+import tDao from "./daos/TuitDao";
+import tuitController from "./controllers/TuitController";
+
 const cors = require('cors')
 const app = express();
 app.use(cors());
@@ -20,6 +24,8 @@ app.get('/hello', (req: Request, res: Response) =>
 
 const userDao = new uDao();
 const uController = new userController(app, userDao);
+const tuitDao = new tDao();
+const tController = new tuitController(app, tuitDao);
 
 
 /**
