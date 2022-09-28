@@ -5,7 +5,6 @@ import TuitControllerI from "../interfaces/TuitController";
 export default class TuitController implements TuitControllerI {
     app: Express;
     tuitDao: TuitDao;
-//     userDao: UserDao;  NEEDED???
     constructor(app: Express, tuitDao: TuitDao) {
         this.app = app;
         this.tuitDao = tuitDao;
