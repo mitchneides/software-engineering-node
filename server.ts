@@ -3,6 +3,8 @@
  */
 import express, {Request, Response} from 'express';
 import mongoose from "mongoose";
+import uDao from "./daos/UserDao"
+import userController from "./controllers/UserController"
 const cors = require('cors')
 const app = express();
 app.use(cors());
@@ -15,6 +17,10 @@ app.get('/', (req: Request, res: Response) =>
 
 app.get('/hello', (req: Request, res: Response) =>
     res.send('Welcome to Foundation of Software Engineering!'));
+
+const userDao = new uDao();
+const uController = new userController(app, userDao);
+
 
 /**
  * Start a server listening at port 4000 locally
