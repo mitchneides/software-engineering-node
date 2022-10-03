@@ -17,8 +17,9 @@ export default class UserDao implements UserDaoI {
                        userObj.lastName, userObj.email);
    }
    async createUser(user: User): Promise<User> {
-   // how to create through the API? Where is the object construction?
-       return await UserModel.create(user);
+       const userObj = await UserModel.create(user);
+       return new User(userObj.username, userObj.password, userObj.firstName,
+                       userObj.lastName, userObj.email);
    }
    async deleteUser(uid: string):  Promise<any> {
        return await UserModel.deleteOne({_id: uid});
