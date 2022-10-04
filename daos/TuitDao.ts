@@ -13,16 +13,11 @@ export default class TuitDao implements TuitDaoI {
        const tuitObj = await TuitModel.findById(tid);
        return new Tuit(tuitObj.tuit, tuitObj.postedOn, tuitObj.postedBy);
    }
-
-
-
    async findTuitsByUser(uid: string): Promise<Tuit[]> {
-   // need help with this syntax ///////////////////////////////////////////////////////////
-       return TuitModel
-                .find({postedBy: uid})
-                .populate('tuit')
-                .exec();
-
+       return await TuitModel
+                    .find({postedBy: uid})
+                    .populate('tuit')
+                    .exec();
    }
    async createTuit(tuit: Tuit): Promise<Tuit> {
        return await TuitModel.create(tuit);
