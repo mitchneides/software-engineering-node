@@ -12,7 +12,6 @@ export default class TuitDao implements TuitDaoI {
    async findTuitById(tid: string): Promise<Tuit> {
        const tuitObj = await TuitModel.findById(tid);
        return new Tuit(tuitObj.tuit, tuitObj.postedOn, tuitObj.postedBy);
-       // postedBy^ is now referencing an ID so how to connect this to the user now???
    }
 
 
