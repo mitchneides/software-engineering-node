@@ -19,10 +19,10 @@ export default class TuitController implements TuitControllerI {
         this.tuitDao.findAllTuits()
             .then(tuits => res.json(tuits));
     findTuitById = (req: Request, res: Response) =>
-            this.tuitDao.findTuitById(req.params.tid)
+            this.tuitDao.findTuitById(req.params.tuitid)
                 .then(tuit => res.json(tuit));
     findTuitsByUser = (req: Request, res: Response) =>
-            this.tuitDao.findTuitsByUser(req.params.userid)
+            this.tuitDao.findTuitsByUser(req.params.uid)
                 .then(tuits => res.json(tuits));
     createTuit = (req: Request, res: Response) =>
             this.tuitDao.createTuit(req.body)
