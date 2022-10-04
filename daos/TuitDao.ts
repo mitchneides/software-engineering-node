@@ -9,9 +9,13 @@ export default class TuitDao implements TuitDaoI {
            new Tuit(tuitObj.tuit, tuitObj.postedOn, tuitObj.postedBy)
        )
    }
-   async findTuitById(tid: string): Promise<Tuit> {
-       const tuitObj = await TuitModel.findById(tid);
-       return new Tuit(tuitObj.tuit, tuitObj.postedOn, tuitObj.postedBy);
+   async findTuitById(tid: string): Promise<any> {
+       try {
+           const tuitObj = await TuitModel.findById(tid);
+           return new Tuit(tuitObj.tuit, tuitObj.postedOn, tuitObj.postedBy);
+       } catch(e) {
+           return "Tuit ID: " + tid + " does not match a tuit in the database";
+       }
    }
    async findTuitsByUser(uid: string): Promise<Tuit[]> {
        return await TuitModel
