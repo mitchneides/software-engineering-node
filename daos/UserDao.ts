@@ -11,10 +11,13 @@ export default class UserDao implements UserDaoI {
        )
    }
    async findUserById(uid: string): Promise<any> {
-   // WORKS BUT crashes app if non-existent userID is passed in
-       const userObj = await UserModel.findById(uid);
-       return new User(userObj.username, userObj.password, userObj.firstName,
-                       userObj.lastName, userObj.email);
+       try {
+           const userObj = await UserModel.findById(uid);
+           return new User(userObj.username, userObj.password, userObj.firstName,
+                           userObj.lastName, userObj.email);
+       } catch(e) {
+           return "User ID: " + uid + " does not match a user in the database";
+       }
    }
    async createUser(user: User): Promise<User> {
        const userObj = await UserModel.create(user);
