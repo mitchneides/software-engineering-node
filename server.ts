@@ -28,8 +28,8 @@ const userDao = new uDao();
 const uController = new userController(app, userDao);
 const tuitDao = new tDao();
 const tController = new tuitController(app, tuitDao);
-const likeDao = new lDao();
-const lController = new LikeController(app, likeDao);
+const likeDao = lDao.getInstance();
+const lController = likeController.getInstance(app);
 
 
 /**
