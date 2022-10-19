@@ -28,15 +28,38 @@ export default class FollowDao implements FollowDaoI {
             .find({follower: uid})
             .populate("followee")
             .exec();
+
+
+
+
+
+    // ************ Need to figure out how to make these 2 queries (or change them)**************
     findAllCommonFollowers = async (uid1: string, uid2: string): Promise<User[]> =>
         FollowModel
-            //.find({followee: uid1, followee: uid2})
             .find({$or: [{followee: uid1}, {followee: uid2}]})
             .populate("follower")
             .exec();
+
+//             .find(
+//                 {$and:
+//                     {$or: [{followee: uid1}, {followee: uid2}]},
+//
+//                 }
+//
+//             )
+//             .populate("follower")
+//             .exec();
+
+
+
+
     findAllCommonFollowings = async (uid1: string, uid2: string): Promise<User[]> =>
         FollowModel
-            .find({$or: [{followee: uid1}, {followee: uid2}]})
+            .find({$or: [{follower: uid1}, {follower: uid2}]})
             .populate("followee")
-            .exec();
+            .then(f => console.log(f))
+            .exec(f)
+
+
+
 }
