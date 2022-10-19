@@ -9,7 +9,7 @@ export default class FollowController implements FollowControllerI {
     public static getInstance = (app: Express): FollowController => {
         if(FollowController.followController === null) {
             FollowController.followController = new FollowController();
-            app.post("/api/users/:uid/follows/:uid",
+            app.post("/api/users/:uid_follower/follows/:uid_following",
                     FollowController.followController.userFollowsUser);
             app.delete("/api/follows/:fid",
                     FollowController.followController.userUnfollowsUser);
@@ -17,9 +17,9 @@ export default class FollowController implements FollowControllerI {
                     FollowController.followController.findAllUserFollowers);
             app.get("/api/users/:uid/following",
                     FollowController.followController.findAllUserFollowings);
-            app.get("/api/users/:uid/commonFollowers/:uid",
+            app.get("/api/users/:uid1/commonFollowers/:uid2",
                     FollowController.followController.findAllCommonFollowers);
-            app.get("/api/users/:uid/commonFollowing/:uid",
+            app.get("/api/users/:uid1/commonFollowing/:uid2",
                     FollowController.followController.findAllCommonFollowings);
         }
         return FollowController.followController;
