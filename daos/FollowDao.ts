@@ -53,13 +53,42 @@ export default class FollowDao implements FollowDaoI {
 
 
 
-    findAllCommonFollowings = async (uid1: string, uid2: string): Promise<User[]> =>
+    findAllCommonFollowings = async (uid1: string, uid2: string): Promise<User[]> => {
+        var result1 = await FollowModel.find({$or: [{follower: uid1}, {follower: uid2}]})
+                                       .where({$and: [{ 'followee': { $ne: uid1 } }, { 'followee': { $ne: uid2 } }]}))
+                                       .populate("followee")
+                                       .exec()
+        var result2 = await FollowModel.find({$or: [{follower: uid1}, {follower: uid2}]})
+                                       .where({$and: [{ 'followee': { $ne: uid1 } }, { 'followee': { $ne: uid2 } }]}))
+                                       .populate("followee")
+                                       .exec()
+        // search results for duplicates
+
+        // return result
+        return result3;
+
+    }
+
+
+
         FollowModel
             .find({$or: [{follower: uid1}, {follower: uid2}]})
+            .where({$and: [{ 'followee': { $ne: uid1 } }, { 'followee': { $ne: uid2 } }]})
+//             .sort('+followee')
             .populate("followee")
-            .then(f => console.log(f))
-            .exec(f)
+            .exec()
 
+        response.send(array)
+
+// idea: ??? .find within a .find possible?? ie:
+// FollowModel.find(xyz).populate('followee').exec(function(err, followees) {
+//      var flist = [];
+//      FollowModel.find(xyz).populate('followee').exec(function(err, followees2) {
+//           flist.push(followees2._id)
+//      }
+//
+//  can I do multiple queries before sending the promise?
+//}
 
 
 }
