@@ -2,6 +2,7 @@ import FollowDaoI from "../interfaces/FollowDaoI";
 import FollowModel from "../mongoose/FollowModel";
 import Follow from "../models/Follow";
 import User from "../models/User";
+import UserModel from "../mongoose/UserModel";
 
 export default class FollowDao implements FollowDaoI {
     private static followDao: FollowDao | null = null;
@@ -28,67 +29,60 @@ export default class FollowDao implements FollowDaoI {
             .find({follower: uid})
             .populate("followee")
             .exec();
-
-
-
-
-
-    // ************ Need to figure out how to make these 2 queries (or change them)**************
-    findAllCommonFollowers = async (uid1: string, uid2: string): Promise<User[]> =>
-        FollowModel
-            .find({$or: [{followee: uid1}, {followee: uid2}]})
-            .populate("follower")
-            .exec();
-
-//             .find(
-//                 {$and:
-//                     {$or: [{followee: uid1}, {followee: uid2}]},
-//
-//                 }
-//
-//             )
-//             .populate("follower")
-//             .exec();
-
-
-
-
-    findAllCommonFollowings = async (uid1: string, uid2: string): Promise<User[]> => {
-        var result1 = await FollowModel.find({$or: [{follower: uid1}, {follower: uid2}]})
-                                       .where({$and: [{ 'followee': { $ne: uid1 } }, { 'followee': { $ne: uid2 } }]}))
-                                       .populate("followee")
-                                       .exec()
-        var result2 = await FollowModel.find({$or: [{follower: uid1}, {follower: uid2}]})
-                                       .where({$and: [{ 'followee': { $ne: uid1 } }, { 'followee': { $ne: uid2 } }]}))
-                                       .populate("followee")
-                                       .exec()
-        // search results for duplicates
-
-        // return result
-        return result3;
-
+    findAllCommonFollowers = async (uid1: string, uid2: string): Promise<User[]> => {
+        // find user1 followers list
+        var followers1 = await FollowModel
+                                .find({$and: [{followee: uid1}, { 'follower': { $ne: uid2 } }]})
+                                .populate("follower")
+                                .exec()
+        // find user2 followings list
+        var followers2 = await FollowModel
+                                .find({$and: [{followee: uid2}, { 'follower': { $ne: uid1 } }]})
+                                .populate("follower")
+                                .exec()
+        // map user1 followers
+        var map: Map<String, User> = new Map();
+        followers1.forEach(function (value) {
+            // Key: _id of user, Value: User object
+            map.set(value.follower._id.toString(), value);
+        });
+        // find common values between user1 and user2
+        var common = new Array();
+        followers2.forEach(function (value) {
+            var v = value.follower._id.toString()
+            if (map.get(v) != null) {
+                common.push(map.get(v));
+            }
+        });
+        // return common users
+        return common;
     }
-
-
-
-        FollowModel
-            .find({$or: [{follower: uid1}, {follower: uid2}]})
-            .where({$and: [{ 'followee': { $ne: uid1 } }, { 'followee': { $ne: uid2 } }]})
-//             .sort('+followee')
-            .populate("followee")
-            .exec()
-
-        response.send(array)
-
-// idea: ??? .find within a .find possible?? ie:
-// FollowModel.find(xyz).populate('followee').exec(function(err, followees) {
-//      var flist = [];
-//      FollowModel.find(xyz).populate('followee').exec(function(err, followees2) {
-//           flist.push(followees2._id)
-//      }
-//
-//  can I do multiple queries before sending the promise?
-//}
-
-
+    findAllCommonFollowings = async (uid1: string, uid2: string): Promise<User[]> => {
+        // find user1 followings list
+        var followings1 = await FollowModel
+                                .find({$and: [{follower: uid1}, { 'followee': { $ne: uid2 } }]})
+                                .populate("followee")
+                                .exec()
+        // find user2 followings list
+        var followings2 = await FollowModel
+                                .find({$and: [{follower: uid2}, { 'followee': { $ne: uid1 } }]})
+                                .populate("followee")
+                                .exec()
+        // map user1 followings
+        var map: Map<String, User> = new Map();
+        followings1.forEach(function (value) {
+            // Key: _id of user, Value: User object
+            map.set(value.followee._id.toString(), value);
+        });
+        // find common values between user1 and user2
+        var common = new Array();
+        followings2.forEach(function (value) {
+            var v = value.followee._id.toString()
+            if (map.get(v) != null) {
+                common.push(map.get(v));
+            }
+        });
+        // return common users
+        return common;
+    }
 }
