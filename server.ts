@@ -14,6 +14,8 @@ import fDao from "./daos/FollowDao";
 import followController from "./controllers/FollowController";
 import bDao from "./daos/BookmarkDao";
 import bookmarkController from "./controllers/BookmarkController";
+import mDao from "./daos/MessageDao";
+import messageController from "./controllers/MessageController";
 
 const cors = require('cors')
 const app = express();
@@ -38,6 +40,8 @@ const followDao = fDao.getInstance();
 const fController = followController.getInstance(app);
 const bookmarkDao = bDao.getInstance();
 const bController = bookmarkController.getInstance(app);
+const messageDao = mDao.getInstance();
+const mController = messageController.getInstance(app);
 
 
 /**
