@@ -25,12 +25,22 @@ export default class MessageDao implements MessageDaoI {
        MessageModel.find({from: uid})
                    .exec()
 
-   findAllReceivedMessages = async (uid: string): Promise<Message[]>=>
+   findAllReceivedMessages = async (uid: string): Promise<Message[]> =>
        MessageModel.find({to: uid})
                    .exec()
 
    deleteMessage = async (mid: string): Promise<any> =>
        MessageModel.deleteOne({_id: mid})
                    .exec()
+
+   findAllMessagesTo = async (from_uid: string, to_uid: string): Promise<Message[]> =>
+       MessageModel.where("from").equals(from_uid)
+                   .where("to").equals(to_uid)
+                   .exec()
+
+   findAllMessagesFrom = async (to_uid: string, from_uid: string): Promise<Message[]> =>
+      MessageModel.where("to").equals(to_uid)
+                  .where("from").equals(from_uid)
+                  .exec()
 
 }
