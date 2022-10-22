@@ -21,5 +21,8 @@ export default class MessageDao implements MessageDaoI {
                           messageObj.from, messageObj.sentOn);
    }
 
+   findAllSentMessages = async (uid: string): Promise<Message[]> =>
+       MessageModel.find({from: uid})
+                   .exec()
 
 }

@@ -11,6 +11,8 @@ export default class MessageController implements MessageControllerI {
             MessageController.messageController = new MessageController();
             app.post("/api/messages",
                     MessageController.messageController.userMessagesUser);
+            app.get("/api/users/:uid/messages/sent",
+                    MessageController.messageController.findAllSentMessages);
 
         }
         return MessageController.messageController;
@@ -21,5 +23,9 @@ export default class MessageController implements MessageControllerI {
     userMessagesUser = (req: Request, res: Response) =>
         MessageController.messageDao.userMessagesUser(req.body)
            .then(m => res.json(m));
+
+    findAllSentMessages = (req: Request, res: Response) =>
+       MessageController.messageDao.findAllSentMessages(req.params.uid)
+           .then(sents => res.json(sents));
 
 }
