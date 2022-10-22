@@ -38,19 +38,25 @@ export default class BookmarkDao implements BookmarkDaoI {
         });
         return result;
     }
-
-
-// TODO:
     findAllBookmarksAfterDate = async (uid: string, date: string): Promise<Tuit[]> => {
-        // dummy return for testing - DELETE
-        return await BookmarkModel.find({bookmarkedBy: uid})
-                     .populate("tuit")
-                     .exec();
+        var allBookmarkedTuits = await BookmarkModel
+                                    .where("bookmarkedBy")
+                                    .equals(uid)
+                                    .populate("tuit")
+        var result = new Array();
+        allBookmarkedTuits.forEach(function (value) {
+            // format date given from url
+            var date_str = date.substring(0,2) + "/"
+                         + date.substring(2,4) + "/"
+                         + date.substring(4);
+            var date_obj = new Date(date_str);
+            // compare to tuits postedOn date
+            var postDate = value.tuit.postedOn;
+            if (postDate > date_obj) {
+                result.push(value);
+            }
+        });
+        return result;
     }
-
-
-
-
-
 
 }
