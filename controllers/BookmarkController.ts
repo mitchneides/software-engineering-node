@@ -15,9 +15,9 @@ export default class BookmarkController implements BookmarkControllerI {
                 BookmarkController.bookmarkController.userUnbookmarksTuit);
             app.get("/api/users/:uid/bookmarks",
                 BookmarkController.bookmarkController.findAllBookmarks);
-            app.get("/api/users/:uid/bookmarks/:aid",
+            app.get("/api/users/:uid/bookmarks/author/:aid",
                 BookmarkController.bookmarkController.findAllBookmarksFromAuthor);
-            app.get("/api/users/:uid/bookmarks/:date",
+            app.get("/api/users/:uid/bookmarks/afterDate/:date",
                 BookmarkController.bookmarkController.findAllBookmarksAfterDate);
         }
         return BookmarkController.bookmarkController;
