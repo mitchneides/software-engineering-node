@@ -29,4 +29,8 @@ export default class MessageDao implements MessageDaoI {
        MessageModel.find({to: uid})
                    .exec()
 
+   deleteMessage = async (mid: string): Promise<any> =>
+       MessageModel.deleteOne({_id: mid})
+                   .exec()
+
 }

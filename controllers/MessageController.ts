@@ -15,6 +15,8 @@ export default class MessageController implements MessageControllerI {
                     MessageController.messageController.findAllSentMessages);
             app.get("/api/users/:uid/messages/received",
                     MessageController.messageController.findAllReceivedMessages);
+            app.delete("/api/messages/:mid",
+                    MessageController.messageController.deleteMessage);
 
         }
         return MessageController.messageController;
@@ -33,5 +35,9 @@ export default class MessageController implements MessageControllerI {
     findAllReceivedMessages = (req: Request, res: Response) =>
        MessageController.messageDao.findAllReceivedMessages(req.params.uid)
            .then(receiveds => res.json(receiveds));
+
+    deleteMessage = (req: Request, res: Response) =>
+        MessageController.messageDao.deleteMessage(req.params.mid)
+           .then(status => res.send(status));
 
 }
