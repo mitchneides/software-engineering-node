@@ -2,9 +2,9 @@ import mongoose from "mongoose";
 import User from "../models/User";
 
 const MessageSchema = new mongoose.Schema({
-    message: String,
+    message_text: {type: String, required: true},
     to: {type: mongoose.Schema.Types.ObjectId, ref: 'UserModel'},
     from: {type: mongoose.Schema.Types.ObjectId, ref: 'UserModel'},
-    sentOn: Date
+    sentOn: {type: Date, default: Date.now}
 }, {collection: 'messages'});
 export default MessageSchema;
