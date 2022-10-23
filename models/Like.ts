@@ -1,5 +1,5 @@
-import Tuit from "Tuit";
-import User from "User";
+import Tuit from "./Tuit";
+import User from "./User";
 
 export default class Like {
     tuit: Tuit,

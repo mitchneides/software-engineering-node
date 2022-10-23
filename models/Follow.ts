@@ -1,4 +1,4 @@
-import User from "User";
+import User from "./User";
 
 export default class Follow {
     follower: User,
