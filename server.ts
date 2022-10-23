@@ -32,8 +32,8 @@ app.get('/hello', (req: Request, res: Response) =>
 
 const userDao = uDao.getInstance();
 const uController = userController.getInstance(app);
-const tuitDao = new tDao();
-const tController = new tuitController(app, tuitDao);
+const tuitDao = tDao.getInstance();
+const tController = tuitController.getInstance(app);
 const likeDao = lDao.getInstance();
 const lController = likeController.getInstance(app);
 const followDao = fDao.getInstance();
