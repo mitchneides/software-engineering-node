@@ -16,8 +16,8 @@ import FollowControllerI from "../interfaces/FollowControllerI";
  *     <li>GET /api/users/:uid/following to retrieve all followings of a particular user</li>
  *     <li>GET /api/users/:uid1/commonFollowers/:uid2 to retrieve all common followers between
  *     two specified users</li>
-  *     <li>GET /api/users/:uid1/commonFollowing/:uid2 to retrieve all common followings between
-  *     two specified users</li>
+ *     <li>GET /api/users/:uid1/commonFollowing/:uid2 to retrieve all common followings between
+ *     two specified users</li>
  * </ul>
  * @property {FollowDao} followDao Singleton DAO implementing tuit CRUD operations
  * @property {FollowController} followController Singleton controller implementing
