@@ -30,8 +30,8 @@ app.get('/', (req: Request, res: Response) =>
 app.get('/hello', (req: Request, res: Response) =>
     res.send('Welcome to Foundation of Software Engineering!'));
 
-const userDao = new uDao();
-const uController = new userController(app, userDao);
+const userDao = uDao.getInstance();
+const uController = userController.getInstance(app);
 const tuitDao = new tDao();
 const tController = new tuitController(app, tuitDao);
 const likeDao = lDao.getInstance();
