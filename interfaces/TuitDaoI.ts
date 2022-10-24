@@ -1,5 +1,8 @@
 import Tuit from "../models/Tuit";
 
+/**
+ * @file Declares API for Tuits related data access object methods
+ */
 export default interface TuitDao {
    findAllTuits(): Promise<Tuit[]>;
    findTuitById(tid: string): Promise<Tuit>;

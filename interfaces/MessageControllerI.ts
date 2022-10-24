@@ -1,5 +1,8 @@
 import {Request, Response} from "express";
 
+/**
+ * @file Declares Interface for Messages object controller methods
+ */
 export default interface MessageControllerI {
     userMessagesUser (req: Request, res: Response): void;
     findAllSentMessages (req: Request, res: Response): void;

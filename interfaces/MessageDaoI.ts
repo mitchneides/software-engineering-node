@@ -1,6 +1,9 @@
 import Message from "../models/Message";
 
-export default interface FollowDaoI {
+/**
+ * @file Declares API for Messages related data access object methods
+ */
+export default interface MessageDaoI {
     userMessagesUser (message: Message): Promise<Message>;
     findAllSentMessages (uid: string): Promise<Message[]>;
     findAllReceivedMessages (uid: string): Promise<Message[]>;
