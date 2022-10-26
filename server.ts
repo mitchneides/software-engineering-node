@@ -22,7 +22,12 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
-mongoose.connect('mongodb://localhost:27017/tuiter');
+// LOCAL DB connection
+// mongoose.connect('mongodb://localhost:27017/tuiter');
+
+// REMOTE DB connection
+mongoose.connect('mongodb+srv://alice:superdupersecretpassword@cluster0.olu5i3x.mongodb.net/tuiter?retryWrites=true&w=majority')
+
 
 app.get('/', (req: Request, res: Response) =>
     res.send('Welcome to Foundation of Software Engineering!!!!'));
