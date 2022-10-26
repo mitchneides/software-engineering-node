@@ -1,3 +1,6 @@
+/**
+ * @file Defines mongoose schema for the bookmarks collection
+ */
 import mongoose from "mongoose";
 import Tuit from "../models/Tuit";
 import User from "../models/User";

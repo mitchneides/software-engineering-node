@@ -1,3 +1,6 @@
+/**
+ * @file Defines mongoose schema for the messages collection
+ */
 import mongoose from "mongoose";
 import User from "../models/User";
 
