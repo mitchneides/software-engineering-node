@@ -12,6 +12,6 @@ import Tuit from "./Tuit";
  * @property {User} likedBy User bookmarking the tuit
  */
 export default class Bookmark {
-    tuit: Tuit,
-    bookmarkedBy: User
+    tuit: Tuit | null = null
+    bookmarkedBy: User | null = null
 }

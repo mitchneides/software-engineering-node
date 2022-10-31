@@ -11,6 +11,6 @@ import User from "./User";
  * @property {User} followee User being followed
  */
 export default class Follow {
-    follower: User,
-    followee: User
+    follower: User | null = null
+    followee: User | null = null
 }
