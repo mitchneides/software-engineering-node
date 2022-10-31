@@ -77,6 +77,7 @@ UserController.userController = null;
 UserController.getInstance = (app) => {
     if (UserController.userController === null) {
         UserController.userController = new UserController();
+        app.get('/users/hello', (req, res) => res.send('hello from users'));
         app.get('/api/users', UserController.userController.findAllUsers);
         app.get('/api/users/:userid', UserController.userController.findUserById);
         app.post('/api/users', UserController.userController.createUser);

@@ -19,6 +19,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
  * service
  */
 const express_1 = __importDefault(require("express"));
+const mongoose_1 = __importDefault(require("mongoose"));
 const UserDao_1 = __importDefault(require("./daos/UserDao"));
 const UserController_1 = __importDefault(require("./controllers/UserController"));
 const TuitDao_1 = __importDefault(require("./daos/TuitDao"));
@@ -38,7 +39,7 @@ app.use(express_1.default.json());
 // LOCAL DB connection
 // mongoose.connect('mongodb://localhost:27017/tuiter');
 // REMOTE DB connection
-// mongoose.connect('mongodb+srv://alice:superdupersecretpassword@cluster0.olu5i3x.mongodb.net/tuiter?retryWrites=true&w=majority')
+mongoose_1.default.connect('mongodb+srv://alice:superdupersecretpassword@cluster0.olu5i3x.mongodb.net/tuiter?retryWrites=true&w=majority');
 app.get('/', (req, res) => res.send('Welcome to Foundation of Software Engineering!!!!'));
 app.get('/hello', (req, res) => res.send('Welcome to Foundation of Software Engineering!'));
 const userDao = UserDao_1.default.getInstance();

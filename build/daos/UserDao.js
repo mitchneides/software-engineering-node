@@ -32,7 +32,11 @@ class UserDao {
     findAllUsers() {
         return __awaiter(this, void 0, void 0, function* () {
             const allUserModels = yield UserModel_1.default.find();
-            return allUserModels.map(userObj => new User_1.default(userObj.username, userObj.password, userObj.firstName, userObj.lastName, userObj.email));
+            return allUserModels;
+            //        .map(userObj =>
+            //            new User(userObj.username, userObj.password, userObj.firstName,
+            //                     userObj.lastName, userObj.email)
+            //        )
         });
     }
     /**

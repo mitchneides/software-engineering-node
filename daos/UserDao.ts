@@ -31,12 +31,13 @@ export default class UserDao implements UserDaoI {
      * @returns Promise To be notified when the users are retrieved from
      * database
      */
-   async findAllUsers(): Promise<User[]> {
+   async findAllUsers(): Promise<any[]> {
        const allUserModels = await UserModel.find();
-       return allUserModels.map(userObj =>
-           new User(userObj.username, userObj.password, userObj.firstName,
-                    userObj.lastName, userObj.email)
-       )
+       return allUserModels
+//        .map(userObj =>
+//            new User(userObj.username, userObj.password, userObj.firstName,
+//                     userObj.lastName, userObj.email)
+//        )
    }
 
     /**
