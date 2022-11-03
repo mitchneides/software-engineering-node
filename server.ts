@@ -27,7 +27,9 @@ const DB_NAME = "myFirstDatabase";
 const DB_QUERY = "retryWrites=true&w=majority";
 const connectionString = `${PROTOCOL}://${DB_USERNAME}:${DB_PASSWORD}@${HOST}/${DB_NAME}?${DB_QUERY}`;
 // connect to the database
-mongoose.connect(connectionString);
+// mongoose.connect(connectionString);
+mongoose.connect('mongodb+srv://alice:superdupersecretpassword@cluster0.olu5i3x.mongodb.net/tuiter?retryWrites=true&w=majority')
+
 
 const app = express();
 app.use(express.json());
@@ -51,3 +53,6 @@ const likesController = LikeController.getInstance(app);
  */
 const PORT = 4000;
 app.listen(process.env.PORT || PORT);
+
+
+// "@types/node": "^16.11.21",
