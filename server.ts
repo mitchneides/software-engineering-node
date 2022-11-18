@@ -21,6 +21,7 @@ import LikeController from "./controllers/LikeController";
 import FollowController from "./controllers/FollowController";
 import MessageController from "./controllers/MessageController";
 import BookmarkController from "./controllers/BookmarkController";
+import AuthenticationController from "./controllers/auth-controller"
 
 const cors = require('cors')
 // Allows a .env file to be created to store environment variables
@@ -49,7 +50,10 @@ mongoose.connect(connectionString, options);
 
 const app = express();
 app.use(express.json());
-app.use(cors());
+app.use(cors({
+    credentials: true,
+    origin: process.env.CORS_ORIGIN
+}));
 
 app.get('/', (req: Request, res: Response) =>
     res.send('Welcome to Software Engineering Final Project!'));
@@ -61,13 +65,17 @@ const likesController = LikeController.getInstance(app);
 const followController = FollowController.getInstance(app);
 const messageController = MessageController.getInstance(app);
 const bookmarkController = BookmarkController.getInstance(app);
+AuthenticationController(app);
 
 // express session
 const session = require("express-session");
 let sess = {
    secret: process.env.SECRET,
+   saveUninitialized: true,
+   resave: true,
    cookie: {
-       secure: false
+       sameSite: process.env.NODE_ENV === "PRODUCTION" ? 'none' : 'lax',
+       secure: process.env.NODE_ENV === "PRODUCTION",
    }
 }
 if (process.env.ENV === 'PRODUCTION') {
