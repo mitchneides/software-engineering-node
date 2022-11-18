@@ -15,51 +15,52 @@
  */
 import express, {Request, Response} from 'express';
 import mongoose from "mongoose";
-
-import uDao from "./daos/UserDao";
-import userController from "./controllers/UserController";
-import tDao from "./daos/TuitDao";
-import tuitController from "./controllers/TuitController";
-import lDao from "./daos/LikeDao";
-import likeController from "./controllers/LikeController";
-import fDao from "./daos/FollowDao";
-import followController from "./controllers/FollowController";
-import bDao from "./daos/BookmarkDao";
-import bookmarkController from "./controllers/BookmarkController";
-import mDao from "./daos/MessageDao";
-import messageController from "./controllers/MessageController";
+import UserController from "./controllers/UserController";
+import TuitController from "./controllers/TuitController";
+import LikeController from "./controllers/LikeController";
+import FollowController from "./controllers/FollowController";
+import MessageController from "./controllers/MessageController";
+import BookmarkController from "./controllers/BookmarkController";
 
 const cors = require('cors')
+// Allows a .env file to be created to store environment variables
+require('dotenv').config()
+
+// Options for mongoDB
+const options = {
+    useNewUrlParser: true,
+    useUnifiedTopology: true,
+    autoIndex: false,
+    maxPoolSize: 10,
+    serverSelectionTimeoutMS: 5000,
+    socketTimeoutMS: 45000,
+    family: 4
+}
+// build the connection string
+const PROTOCOL = "mongodb+srv";
+const DB_USERNAME = process.env.DB_USERNAME;
+const DB_PASSWORD = process.env.DB_PASSWORD;
+const HOST = "cluster0.olu5i3x.mongodb.net";
+const DB_NAME = "tuiter";
+const DB_QUERY = "retryWrites=true&w=majority";
+const connectionString = `${PROTOCOL}://${DB_USERNAME}:${DB_PASSWORD}@${HOST}/${DB_NAME}?${DB_QUERY}`;
+// connect to the database
+mongoose.connect(connectionString, options);
+
 const app = express();
-app.use(cors());
 app.use(express.json());
-
-// LOCAL DB connection
-// mongoose.connect('mongodb://localhost:27017/tuiter');
-
-// REMOTE DB connection
-mongoose.connect('mongodb+srv://alice:superdupersecretpassword@cluster0.olu5i3x.mongodb.net/tuiter?retryWrites=true&w=majority')
-
+app.use(cors());
 
 app.get('/', (req: Request, res: Response) =>
-    res.send('Welcome to Foundation of Software Engineering!!!!'));
+    res.send('Welcome to Software Engineering Final Project!'));
 
-app.get('/hello', (req: Request, res: Response) =>
-    res.send('Welcome to Foundation of Software Engineering!'));
-
-const userDao = uDao.getInstance();
-const uController = userController.getInstance(app);
-const tuitDao = tDao.getInstance();
-const tController = tuitController.getInstance(app);
-const likeDao = lDao.getInstance();
-const lController = likeController.getInstance(app);
-const followDao = fDao.getInstance();
-const fController = followController.getInstance(app);
-const bookmarkDao = bDao.getInstance();
-const bController = bookmarkController.getInstance(app);
-const messageDao = mDao.getInstance();
-const mController = messageController.getInstance(app);
-
+// create RESTful Web service API
+const userController = UserController.getInstance(app);
+const tuitController = TuitController.getInstance(app);
+const likesController = LikeController.getInstance(app);
+const followController = FollowController.getInstance(app);
+const messageController = MessageController.getInstance(app);
+const bookmarkController = BookmarkController.getInstance(app);
 
 /**
  * Start a server listening at port 4000 locally

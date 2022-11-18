@@ -1,26 +1,36 @@
 /**
- * @file Controller RESTful Web service API for Bookmarks resource
+ * @file Controller RESTful Web service API for bookmarks resource
  */
-import {Express, Request, Response} from "express";
+
+import BookmarkControllerI from "../interfaces/bookmarks/BookmarkControllerI";
 import BookmarkDao from "../daos/BookmarkDao";
-import BookmarkControllerI from "../interfaces/BookmarkControllerI";
+import {Request, Response, Express} from "express";
+import Bookmark from "../models/bookmarks/Bookmark";
 
 /**
- * @class BookmarkController Implements RESTful Web service API for Bookmarks resource.
+ * @class BookmarkController Implements RESTful Web service API for bookmark
+ * resource.
  * Defines the following HTTP endpoints:
  * <ul>
- *     <li>POST /api/users/:uid/bookmarks/:tid to create a new Bookmark instance for
- *     a given user</li>
- *     <li>DELETE /api/bookmarks/:bid to remove a particular Bookmark instance</li>
- *     <li>GET /api/users/:uid/bookmarks to retrieve all Bookmark instances</li>
- *     <li>GET /api/users/:uid/bookmarks/author/:aid to retrieve all Bookmark instances for a
- *     given author (User)</li>
- *     <li>GET /api/users/:uid/bookmarks/afterDate/:date to retrieve all Bookmark instances
- *     that were bookmarked after a given date </li>
+ *     <li>
+ *         GET /api/bookmarks to retrieve all bookmarks
+ *     </li>
+ *     <li>
+ *         GET /api/users/:uid/bookmarks to retrieve all bookmarks of a user
+ *     </li>
+ *     <li>
+ *         POST /api/users/:uid/bookmarks/:tid to create a bookmark of a tuit by
+ *         a user
+ *     </li>
+ *     <li>
+ *         DEL /api/users/:uid/bookmarks/:tid to remove a bookmark of a tuit by
+ *         a user
+ *     </li>
  * </ul>
- * @property {BookmarkDao} bookmarkDao Singleton DAO implementing tuit CRUD operations
- * @property {BookmarkController} bookmarkController Singleton controller implementing
- * RESTful Web service API
+ * @property {BookmarkDao} bookmarkDao Singleton DAO implementing bookmarks CRUD
+ * operations
+ * @property {BookmarkController} BookmarkController Singleton controller
+ * implementing RESTful Web service API
  */
 export default class BookmarkController implements BookmarkControllerI {
     private static bookmarkDao: BookmarkDao = BookmarkDao.getInstance();
@@ -35,81 +45,68 @@ export default class BookmarkController implements BookmarkControllerI {
     public static getInstance = (app: Express): BookmarkController => {
         if (BookmarkController.bookmarkController === null) {
             BookmarkController.bookmarkController = new BookmarkController();
-            app.post("/api/users/:uid/bookmarks/:tid",
-                BookmarkController.bookmarkController.userBookmarksTuit);
-            app.delete("/api/bookmarks/:bid",
-                BookmarkController.bookmarkController.userUnbookmarksTuit);
-            app.get("/api/users/:uid/bookmarks",
-                BookmarkController.bookmarkController.findAllBookmarks);
-            app.get("/api/users/:uid/bookmarks/author/:aid",
-                BookmarkController.bookmarkController.findAllBookmarksFromAuthor);
-            app.get("/api/users/:uid/bookmarks/afterDate/:date",
-                BookmarkController.bookmarkController.findAllBookmarksAfterDate);
+            app.get("/api/bookmarks", BookmarkController.bookmarkController
+                .findAllBookmarks);
+            app.get("/api/users/:uid/bookmarks", BookmarkController.bookmarkController
+                .findAllBookmarksOfUser)
+            app.post("/api/users/:uid/bookmarks/:tid", BookmarkController.bookmarkController
+                .userBookmarksTuit);
+            app.delete("/api/users/:uid/bookmarks/:tid", BookmarkController.bookmarkController
+                .userUnbookmarksTuit);
         }
-        return BookmarkController.bookmarkController;
+        return BookmarkController.bookmarkController
     }
 
-    private constructor() {}
+    private constructor() {
+    }
 
     /**
-     * Creates a Bookmark instance of a Tuit in the database and returns the Bookmark Object.
-     * @param {Request} req Represents request from client, including the path
-     * parameters uid (primary key for bookmarking user) and tid (primary key for the tuit
-     * getting bookmarked)
+     * Retrieves all bookmarks from database and returns an array of bookmarks
+     * @param {Request} req Represents request from client
      * @param {Response} res Represents response to client, including the
-     * body formatted as JSON object of the Bookmark
-     */
-    userBookmarksTuit = (req: Request, res: Response) =>
-        BookmarkController.bookmarkDao.userBookmarksTuit(req.params.uid, req.params.tid)
-            .then(bookmark => res.json(bookmark));
-
-    /**
-     * Deletes a Bookmark instance from the database and returns the status of whether
-     * or not the deletion was successful
-     * @param {Request} req Represents request from client, including path
-     * parameter bid identifying the primary key of the Bookmark to be removed
-     * @param {Response} res Represents response to client, including status
-     * on whether deleting a user was successful or not
-     */
-    userUnbookmarksTuit = (req: Request, res: Response) =>
-        BookmarkController.bookmarkDao.userUnbookmarksTuit(req.params.bid)
-            .then(status => res.send(status));
-
-    /**
-     * Retrieves all Bookmarks from the database for a particular user and returns
-     * an array of tuits that they represent.
-     * @param {Request} req Represents request from client, including path
-     * parameter uid identifying the primary key of the user whose bookmarks are being returned
-     * @param {Response} res Represents response to client, including the
-     * body formatted as JSON arrays containing the tuit objects
+     * body formatted as JSON arrays containing the bookmark objects
      */
     findAllBookmarks = (req: Request, res: Response) =>
-        BookmarkController.bookmarkDao.findAllBookmarks(req.params.uid)
-            .then(tuits => res.json(tuits));
+        BookmarkController.bookmarkDao.findAllBookmarks()
+            .then((bookmarks: Bookmark[]) => res.json(bookmarks));
 
     /**
-     * Retrieves all Bookmarks from the database for a particular user filtered by a
-     * specified author and returns an array of tuits that they represent.
-     * @param {Request} req Represents request from client, including path
-     * parameter uid identifying the primary key of the user whose bookmarks are being returned
-     * and aid identifying the primary key of the author who wrote the tuit(s)
+     * Retrieves all bookmarks of a user from database and returns an array of
+     * bookmarks
+     * @param {Request} req Represents request from client
      * @param {Response} res Represents response to client, including the
-     * body formatted as JSON arrays containing the tuit objects
+     * body formatted as JSON arrays containing the bookmark objects
      */
-    findAllBookmarksFromAuthor = (req: Request, res: Response) =>
-        BookmarkController.bookmarkDao.findAllBookmarksFromAuthor(req.params.uid, req.params.aid)
-            .then(tuits => res.json(tuits));
+    findAllBookmarksOfUser = (req: Request, res: Response) =>
+        BookmarkController.bookmarkDao.findAllBookmarksOfUser(req.params.uid)
+            .then((bookmarks: Bookmark[]) => res.json(bookmarks));
 
     /**
-     * Retrieves all Bookmarks from the database for a particular user where the bookmarking
-     * took place after a specified date
-     * @param {Request} req Represents request from client, including path
-     * parameter uid identifying the primary key of the user whose bookmarks are being returned
-     * and date identifying the date constraint that the bookmarking must have taken place after
+     * Creates a new bookmark instance between tuit and a user
+     * @param {Request} req Represents request from client, including body
+     * containing the JSON object for the new bookmark to be inserted in the
+     * database
      * @param {Response} res Represents response to client, including the
-     * body formatted as JSON arrays containing the tuit objects
+     * body formatted as JSON containing the new bookmark relationship that
+     * was inserted in the database
      */
-    findAllBookmarksAfterDate = (req: Request, res: Response) =>
-        BookmarkController.bookmarkDao.findAllBookmarksAfterDate(req.params.uid, req.params.date)
-            .then(tuits => res.json(tuits));
-};
+    userBookmarksTuit = (req: Request, res: Response) =>
+        BookmarkController.bookmarkDao.userBookmarksTuit(
+            req.params.uid,
+            req.params.tid
+        ).then(bookmark => res.json(bookmark));
+
+    /**
+     * Removes a bookmark instance from the database
+     * @param {Request} req Represents request from client, including path
+     * parameter uid identifying the primary key of the user un-bookmarking and
+     * tid identifying the primary key of the tuit being un-bookmarked
+     * @param {Response} res Represents response to client, including status
+     * on whether deleting the relationship of a bookmark between a user and a tuit
+     */
+    userUnbookmarksTuit = (req: Request, res: Response) =>
+        BookmarkController.bookmarkDao.userUnbookmarksTuit(
+            req.params.uid,
+            req.params.tid
+        ).then(status => res.json(status));
+}

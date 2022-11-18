@@ -1,24 +1,23 @@
 /**
- * @file Controller RESTful Web service API for Messages resource
+ * @file Controller RESTful Web service API for messages resource
  */
-import {Express, Request, Response} from "express";
+import MessageControllerI from "../interfaces/messages/MessageControllerI";
 import MessageDao from "../daos/MessageDao";
-import MessageControllerI from "../interfaces/MessageControllerI";
+import {Request, Response, Express} from "express";
+import Message from "../models/messages/Message";
 
 /**
- * @class LikeController Implements RESTful Web service API for Messages resource.
+ * @class MessageController Implements RESTful Web service API for messages resource.
  * Defines the following HTTP endpoints:
  * <ul>
- *     <li>POST /api/messages for a user to message another user</li>
- *     <li>GET /api/users/:uid/messages/sent for a user to find all sent messages</li>
- *     <li>GET /api/users/:uid/messages/received for a user to find all received messages</li>
- *     <li>DELETE /api/messages/:mid for a user to delete a message</li>
- *     <li>GET /api/users/:from_uid/messages/sent/:to_uid for a user to find all sent messages
- *     to a particular user</li>
- *     <li>GET /api/users/:to_uid/messages/from/:from_uid for a user to find all received messages
- *     from a particular user</li>
+ *     <li>GET /api/messages to retrieve all message instances</li>
+ *     <li>GET /api/messages/:uid to retrieve all messages sent to user</li>
+ *     <li>GET /api/users/:uid/messages to retrieve all messages sent by user</li>
+ *     <li>DELETE api/messages/:mid to delete a message from database</li>
+ *     <li>POST /api/users/:uid/messages/:ouid to send a message from one user
+ *     to another user</li>
  * </ul>
- * @property {MessageDao} messageDao Singleton DAO implementing tuit CRUD operations
+ * @property {MessageDao} messageDao Singleton DAO implementing message CRUD operations
  * @property {MessageController} messageController Singleton controller implementing
  * RESTful Web service API
  */
@@ -27,99 +26,89 @@ export default class MessageController implements MessageControllerI {
     private static messageController: MessageController | null = null;
 
     /**
-     * Creates singleton controller instance
+     *Creates singleton controller instance
      * @param {Express} app Express instance to declare the RESTful Web service
      * API
-     * @return MessageController
+     * @return {MessageController} MessageController
      */
     public static getInstance = (app: Express): MessageController => {
-        if(MessageController.messageController === null) {
+        if (MessageController.messageController === null) {
             MessageController.messageController = new MessageController();
-            app.post("/api/messages",
-                    MessageController.messageController.userMessagesUser);
-            app.get("/api/users/:uid/messages/sent",
-                    MessageController.messageController.findAllSentMessages);
-            app.get("/api/users/:uid/messages/received",
-                    MessageController.messageController.findAllReceivedMessages);
-            app.delete("/api/messages/:mid",
-                    MessageController.messageController.deleteMessage);
-            app.get("/api/users/:from_uid/messages/sent/:to_uid",
-                    MessageController.messageController.findAllMessagesTo);
-            app.get("/api/users/:to_uid/messages/from/:from_uid",
-                    MessageController.messageController.findAllMessagesFrom);
+            app.get("/api/messages", MessageController.messageController
+                .findAllMessages);
 
+            app.get("/api/messages/:uid", MessageController.messageController
+                .findAllMessagesReceivedByUser);
+
+            app.get("/api/users/:uid/messages", MessageController.messageController
+                .findAllMessagesSentByUser)
+
+            app.delete("/api/messages/:mid", MessageController.messageController
+                .userDeleteMessage)
+
+            app.post("/api/users/:uid/messages/:ouid", MessageController.messageController
+                .userMessageUser)
         }
         return MessageController.messageController;
     }
 
-    private constructor() {}
+    private constructor() {
+    }
 
     /**
-     * Creates a message instance from one specified user to another.
-     * @param {Request} req Represents request from client, message in the body (message_text,
-     * sending userID, receiving userID, sent date optional)
+     * Retrieves all messages from the database and returns an array of messages.
+     * @param {Request} req Represents request from client
      * @param {Response} res Represents response to client, including the
-     * body formatted as JSON object of the message
+     * body formatted as JSON arrays containing the message objects
      */
-    userMessagesUser = (req: Request, res: Response) =>
-        MessageController.messageDao.userMessagesUser(req.body)
-           .then(m => res.json(m));
+    findAllMessages = (req: Request, res: Response) =>
+        MessageController.messageDao.findAllMessages()
+            .then(messages => res.json(messages));
 
     /**
-     * Retrieves all messages sent by a particular user.
-     * @param {Request} req Represents request from client, including the path
-     * parameter uid (primary key for the user)
+     * Retrieves all messages sent to user from the database and returns an
+     * array of messages.
+     * @param {Request} req Represents request from client
      * @param {Response} res Represents response to client, including the
-     * body formatted as JSON array of the message objects
+     * body formatted as JSON arrays containing the message objects
      */
-    findAllSentMessages = (req: Request, res: Response) =>
-       MessageController.messageDao.findAllSentMessages(req.params.uid)
-           .then(sents => res.json(sents));
+    findAllMessagesReceivedByUser = (req: Request, res: Response) =>
+        MessageController.messageDao.findAllMessagesReceivedByUser(req.params.uid)
+            .then(messages => res.json(messages));
 
     /**
-     * Retrieves all messages received by a particular user.
-     * @param {Request} req Represents request from client, including the path
-     * parameter uid (primary key for the user)
+     * Retrieves all messages sent by user from the database and returns an
+     * array of messages.
+     * @param {Request} req Represents request from client
      * @param {Response} res Represents response to client, including the
-     * body formatted as JSON array of the message objects
+     * body formatted as JSON arrays containing the message objects
      */
-    findAllReceivedMessages = (req: Request, res: Response) =>
-       MessageController.messageDao.findAllReceivedMessages(req.params.uid)
-           .then(receiveds => res.json(receiveds));
+    findAllMessagesSentByUser = (req: Request, res: Response) =>
+        MessageController.messageDao.findAllMessagesSentByUser(req.params.uid)
+            .then(messages => res.json(messages))
 
     /**
-     * Removes a particular message instance.
-     * @param {Request} req Represents request from client, including the path
-     * parameter mid (primary key for the message)
-     * @param {Response} res Represents response to client, including the
-     * status of whether or not the deletion was successfull
+     * Removes a message instance from the database
+     * @param {Request} req Represents request from client, including path
+     * parameter mid identifying the primary key of the message to be removed
+     * @param {Response} res Represents response to client, including status
+     * on whether deleting a message was successful or not
      */
-    deleteMessage = (req: Request, res: Response) =>
-        MessageController.messageDao.deleteMessage(req.params.mid)
-           .then(status => res.send(status));
+    userDeleteMessage = (req: Request, res: Response) =>
+        MessageController.messageDao.userDeleteMessage(req.params.mid)
+            .then(status => res.json(status))
 
     /**
-     * Retrieves all messages sent by a particular user to a particular user.
-     * @param {Request} req Represents request from client, including the path
-     * parameters from_uid (primary key for the sending user) and to_uid
-     * (primary key for the receiving user)
+     * Creates a message instance from the database
+     * @param {Request} req Represents request from client, including path
+     * parameter mid identifying the primary key of the message to be removed
      * @param {Response} res Represents response to client, including the
-     * body formatted as JSON array of the message objects
+     * body formatted as JSON containing the message object
      */
-    findAllMessagesTo = (req: Request, res: Response) =>
-        MessageController.messageDao.findAllMessagesTo(req.params.from_uid, req.params.to_uid)
-           .then(sents => res.json(sents));
-
-    /**
-     * Retrieves all messages received by a particular user from a particular user.
-     * @param {Request} req Represents request from client, including the path
-     * parameters to_uid (primary key for the receiving user) and from_uid
-     * (primary key for the sending user)
-     * @param {Response} res Represents response to client, including the
-     * body formatted as JSON array of the message objects
-     */
-    findAllMessagesFrom = (req: Request, res: Response) =>
-        MessageController.messageDao.findAllMessagesFrom(req.params.to_uid, req.params.from_uid)
-           .then(receiveds => res.json(receiveds));
-
+    userMessageUser = (req: Request, res: Response) =>
+        MessageController.messageDao.userMessageUser(
+            req.params.uid,
+            req.params.ouid,
+            req.body
+        ).then((message: Message) => res.json(message))
 }
