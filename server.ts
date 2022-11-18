@@ -62,6 +62,20 @@ const followController = FollowController.getInstance(app);
 const messageController = MessageController.getInstance(app);
 const bookmarkController = BookmarkController.getInstance(app);
 
+// express session
+const session = require("express-session");
+let sess = {
+   secret: process.env.SECRET,
+   cookie: {
+       secure: false
+   }
+}
+if (process.env.ENV === 'PRODUCTION') {
+   app.set('trust proxy', 1) // trust first proxy
+   sess.cookie.secure = true // serve secure cookies
+}
+
+
 /**
  * Start a server listening at port 4000 locally
  * but use environment variable PORT on Heroku if available.
