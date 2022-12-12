@@ -7,7 +7,7 @@ const AuthenticationController = (app: Express) => {
 
   const userDao: UserDao = UserDao.getInstance();
 
-  const signup = async (req: Request, res: Response) => {
+  const register = async (req: Request, res: Response) => {
     const newUser = req.body;
     const password = newUser.password;
     const hash = await bcrypt.hash(password, saltRounds);
@@ -23,11 +23,12 @@ const AuthenticationController = (app: Express) => {
           .createUser(newUser);
       insertedUser.password = '';
       // @ts-ignore
+
       req.session['profile'] = insertedUser;
       res.json(insertedUser);
     }
   }
-  app.post("/api/auth/signup", signup);
+  app.post("/api/auth/signup", register);
 
   const profile = (req: Request, res: Response) => {
     // @ts-ignore

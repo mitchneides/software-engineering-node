@@ -21,7 +21,7 @@ import LikeController from "./controllers/LikeController";
 import FollowController from "./controllers/FollowController";
 import MessageController from "./controllers/MessageController";
 import BookmarkController from "./controllers/BookmarkController";
-import AuthenticationController from "./controllers/auth-controller"
+import AuthenticationController from "./controllers/AuthenticationController"
 
 const cors = require('cors')
 // Allows a .env file to be created to store environment variables
@@ -49,14 +49,26 @@ const connectionString = `${PROTOCOL}://${DB_USERNAME}:${DB_PASSWORD}@${HOST}/${
 mongoose.connect(connectionString, options);
 
 const app = express();
-app.use(express.json());
 app.use(cors({
     credentials: true,
     origin: process.env.CORS_ORIGIN
 }));
+// express session
+const session = require("express-session");
+let sess = {
+   secret: 'what ever',//process.env.SECRET,
+   saveUninitialized: true,
+   resave: false,//true,
+   cookie: { secure : false }
+}
+
+app.use(session(sess))
+
+app.use(express.json());
 
 app.get('/', (req: Request, res: Response) =>
     res.send('Welcome to Software Engineering Final Project!'));
+
 
 // create RESTful Web service API
 const userController = UserController.getInstance(app);
@@ -66,23 +78,6 @@ const followController = FollowController.getInstance(app);
 const messageController = MessageController.getInstance(app);
 const bookmarkController = BookmarkController.getInstance(app);
 AuthenticationController(app);
-
-// express session
-const session = require("express-session");
-let sess = {
-   secret: process.env.SECRET,
-   saveUninitialized: true,
-   resave: true,
-   cookie: {
-       sameSite: process.env.NODE_ENV === "PRODUCTION" ? 'none' : 'lax',
-       secure: process.env.NODE_ENV === "PRODUCTION",
-   }
-}
-if (process.env.ENV === 'PRODUCTION') {
-   app.set('trust proxy', 1) // trust first proxy
-   sess.cookie.secure = true // serve secure cookies
-}
-
 
 /**
  * Start a server listening at port 4000 locally
