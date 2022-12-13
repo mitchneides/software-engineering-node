@@ -104,7 +104,6 @@ export default class LikeController implements LikeControllerI {
      */
     userTogglesTuitLikes = async (req: Request, res: Response) => {
         const likeDao = LikeController.likeDao;
-        // const dislikeDao = LikeController.dislikeDao
         const tuitDao = LikeController.tuitDao;
         const uid = req.params.uid;
         const tid = req.params.tid;
@@ -113,13 +112,11 @@ export default class LikeController implements LikeControllerI {
         const userId = uid === "me" && profile ?
             profile._id : uid;
         try {
-            // Check if user has already liked/disliked
+            // Check if user has already liked
             const priorLike = await likeDao.findUserLikesTuit(userId, tid);
-            // const priorDislike = await dislikeDao.findUserDislikesTuit(userId, tid)
 
-            // Retrieve prior count of likes/dislikes
+            // Retrieve prior count of likes
             const countLikes = await likeDao.countHowManyLikedTuit(tid)
-            // const countDislikes = await dislikeDao.countHowManyDislikedTuit(tid)
 
             // Store tuit
             const tuit = await tuitDao.findTuitById(tid)
